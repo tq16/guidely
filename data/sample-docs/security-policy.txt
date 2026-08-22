@@ -1,0 +1,11 @@
+Information Security Policy
+
+All employees must use multi-factor authentication for company accounts and systems.
+
+Passwords must contain at least 12 characters and should not be reused across company and personal accounts. Do not share passwords with any person, including colleagues or managers.
+
+Suspicious emails, unexpected links, and unknown attachments should be reported using the "Report Phishing" button in the email system.
+
+Company documents containing confidential information must only be stored in approved company systems. Employees must not send confidential documents to personal email addresses or upload them to personal cloud storage.
+
+Any suspected data breach or lost company device must be reported to IT Security immediately.

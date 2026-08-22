@@ -1,0 +1,15 @@
+IT Support FAQ
+
+How do I reset my company password?
+
+Visit the company password portal and select "Reset Password". You will need to verify your identity using multi-factor authentication. If you cannot access the portal, contact the IT Service Desk.
+
+How do I request a new laptop or accessory?
+
+Submit an equipment request through the IT Service Desk portal. Standard requests are normally processed within five working days.
+
+What should I do if my laptop is lost or stolen?
+
+Report the issue immediately to IT Security and your manager. Do not wait until the next working day. IT will remotely protect company data where possible.
+
+IT Service Desk hours are Sunday to Thursday, 8:00 AM to 5:00 PM.

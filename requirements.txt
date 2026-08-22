@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+xai-sdk
+faiss-cpu
+numpy
+sentence-transformers
+pypdf
