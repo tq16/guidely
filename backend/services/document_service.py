@@ -1,21 +1,17 @@
 from pathlib import Path
 
-
-# Finds: guidely/data/sample-docs/
-SAMPLE_DOCS_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "data"
-    / "sample-docs"
+from backend.services.upload_service import (
+    ALLOWED_EXTENSIONS,
+    UPLOADED_DOCS_PATH,
+    read_uploaded_file,
 )
 
 
-def chunk_text(text: str, chunk_size: int = 80, overlap: int = 15) -> list[str]:
-    """
-    Splits text into small overlapping word chunks.
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+SAMPLE_DOCS_PATH = PROJECT_ROOT / "data" / "sample-docs"
 
-    Overlap means a few words appear in both chunks,
-    so important information is not cut in the middle.
-    """
+
+def chunk_text(text: str, chunk_size: int = 80, overlap: int = 15) -> list[str]:
     words = text.split()
     chunks = []
 
@@ -23,8 +19,7 @@ def chunk_text(text: str, chunk_size: int = 80, overlap: int = 15) -> list[str]:
 
     while start < len(words):
         end = start + chunk_size
-        chunk = " ".join(words[start:end])
-        chunks.append(chunk)
+        chunks.append(" ".join(words[start:end]))
 
         if end >= len(words):
             break
@@ -36,13 +31,26 @@ def chunk_text(text: str, chunk_size: int = 80, overlap: int = 15) -> list[str]:
 
 def load_sample_documents() -> list[dict]:
     """
-    Reads all .txt files in data/sample-docs
-    and returns document information plus chunks.
+    Reads both sample documents and uploaded documents.
     """
     documents = []
 
-    for file_path in SAMPLE_DOCS_PATH.glob("*.txt"):
-        text = file_path.read_text(encoding="utf-8").strip()
+    file_paths = list(SAMPLE_DOCS_PATH.glob("*.txt"))
+
+    if UPLOADED_DOCS_PATH.exists():
+        for file_path in UPLOADED_DOCS_PATH.iterdir():
+            if file_path.is_file() and file_path.suffix.lower() in ALLOWED_EXTENSIONS:
+                file_paths.append(file_path)
+
+    for file_path in sorted(file_paths):
+        if file_path.suffix.lower() == ".txt":
+            text = file_path.read_text(encoding="utf-8").strip()
+        else:
+            text = read_uploaded_file(file_path)
+
+        if not text:
+            continue
+
         chunks = chunk_text(text)
 
         documents.append(
@@ -55,4 +63,3 @@ def load_sample_documents() -> list[dict]:
         )
 
     return documents
-

@@ -2,7 +2,7 @@ fastapi
 uvicorn[standard]
 python-multipart
 python-dotenv
-xai-sdk
+google-genai
 faiss-cpu
 numpy
 sentence-transformers

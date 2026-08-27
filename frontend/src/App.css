@@ -1,0 +1,401 @@
+.app {
+  width: min(960px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 80px 0;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 42px;
+}
+
+.label,
+.section-label {
+  margin: 0 0 10px;
+  color: #0f766e;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.hero h1 {
+  margin: 0;
+  color: #102a43;
+  font-size: clamp(2.8rem, 7vw, 4.5rem);
+}
+
+.subtitle {
+  max-width: 600px;
+  margin: 14px auto 0;
+  color: #52616b;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.card,
+.answer-card,
+.source-card {
+  background: #ffffff;
+  border: 1px solid #dbe5e8;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(30, 55, 70, 0.08);
+}
+
+.card {
+  padding: 28px;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+  color: #243b53;
+  font-weight: 700;
+}
+
+.question-row {
+  display: flex;
+  gap: 12px;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 15px 16px;
+  border: 1px solid #b8cbd1;
+  border-radius: 10px;
+  color: #102a43;
+  font: inherit;
+}
+
+input:focus {
+  outline: 3px solid #bcefe6;
+  border-color: #0f766e;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 15px 20px;
+  background: #0f766e;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 750;
+}
+
+button:hover:not(:disabled) {
+  background: #115e59;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.error-message {
+  margin: 18px 0 0;
+  color: #b42318;
+  font-weight: 650;
+}
+
+.result-section {
+  margin-top: 32px;
+}
+
+.answer-card {
+  padding: 30px;
+}
+
+.answer-card h2 {
+  margin: 0;
+  color: #172b4d;
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.7;
+}
+
+.latency {
+  margin: 20px 0 0;
+  color: #6b7c85;
+  font-size: 0.9rem;
+}
+
+.sources-section {
+  margin-top: 30px;
+}
+
+.sources-list {
+  display: grid;
+  gap: 14px;
+}
+
+.source-card {
+  padding: 20px;
+  box-shadow: none;
+}
+
+.source-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #102a43;
+}
+
+.source-header span {
+  color: #0f766e;
+  font-size: 0.85rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.source-card p {
+  margin: 12px 0 0;
+  color: #52616b;
+  line-height: 1.6;
+}
+
+@media (max-width: 650px) {
+  .app {
+    width: min(100% - 28px, 960px);
+    padding: 48px 0;
+  }
+
+  .question-row {
+    flex-direction: column;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .source-header {
+    flex-direction: column;
+  }
+}
+
+
+.upload-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  margin-top: 22px;
+  padding: 26px 28px;
+  background: #e7f7f3;
+  border: 1px solid #b9e5dc;
+  border-radius: 16px;
+}
+
+.upload-card h2 {
+  margin: 0;
+  color: #102a43;
+  font-size: 1.15rem;
+}
+
+.upload-card p:not(.section-label):not(.upload-message) {
+  margin: 7px 0 0;
+  color: #52616b;
+}
+
+.upload-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.upload-form input {
+  max-width: 230px;
+  padding: 10px;
+  background: white;
+}
+
+.upload-message {
+  margin: 0;
+  color: #0f766e;
+  font-weight: 700;
+}
+
+@media (max-width: 650px) {
+  .upload-card,
+  .upload-form {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .upload-form input {
+    max-width: none;
+  }
+}
+
+.documents-section {
+  margin-top: 30px;
+}
+
+.documents-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.documents-title h2 {
+  margin: 0;
+  color: #102a43;
+  font-size: 1.25rem;
+}
+
+.document-count {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #dff5ef;
+  color: #0f766e;
+  font-size: 0.85rem;
+  font-weight: 750;
+}
+
+.documents-list {
+  display: grid;
+  gap: 10px;
+}
+
+.document-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  background: white;
+  border: 1px solid #dbe5e8;
+  border-radius: 12px;
+}
+
+.document-row strong {
+  color: #102a43;
+}
+
+.document-row p,
+.empty-message {
+  margin: 5px 0 0;
+  color: #6b7c85;
+  font-size: 0.9rem;
+}
+
+.delete-button {
+  padding: 10px 14px;
+  background: #fff0f0;
+  color: #b42318;
+  border: 1px solid #f4b4b0;
+}
+
+.delete-button:hover:not(:disabled) {
+  background: #fdd8d5;
+}
+
+@media (max-width: 650px) {
+  .documents-title,
+  .document-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+.documents-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reindex-button {
+  padding: 8px 12px;
+  background: #e7f7f3;
+  color: #0f766e;
+  border: 1px solid #9bd9ca;
+  font-size: 0.85rem;
+}
+
+.reindex-button:hover:not(:disabled) {
+  background: #cdeee5;
+}
+
+@media (max-width: 650px) {
+  .documents-actions {
+    justify-content: space-between;
+  }
+}
+
+.document-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-button {
+  padding: 10px 14px;
+  background: #e7f7f3;
+  color: #0f766e;
+  border: 1px solid #9bd9ca;
+}
+
+.edit-button:hover {
+  background: #cdeee5;
+}
+
+.editor-card {
+  margin-top: 18px;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #b9e5dc;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(30, 55, 70, 0.08);
+}
+
+.editor-header,
+.editor-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.editor-header h2 {
+  margin: 0;
+  color: #102a43;
+  font-size: 1.1rem;
+}
+
+.document-editor {
+  width: 100%;
+  min-height: 330px;
+  margin-top: 18px;
+  padding: 14px;
+  resize: vertical;
+  border: 1px solid #b8cbd1;
+  border-radius: 10px;
+  color: #102a43;
+  font: inherit;
+  line-height: 1.55;
+}
+
+.document-editor:focus {
+  outline: 3px solid #bcefe6;
+  border-color: #0f766e;
+}
+
+.cancel-button {
+  padding: 9px 13px;
+  background: #f3f6f7;
+  color: #52616b;
+  border: 1px solid #dbe5e8;
+}
+
+.cancel-button:hover {
+  background: #e6edef;
+}
+
+@media (max-width: 650px) {
+  .document-buttons,
+  .editor-header,
+  .editor-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
