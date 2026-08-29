@@ -1,3 +1,4 @@
+from io import BytesIO
 from pathlib import Path
 
 from fastapi import HTTPException, UploadFile
@@ -30,6 +31,44 @@ def get_uploaded_file_path(file_name: str) -> Path:
     return file_path
 
 
+def validate_document_content(extension: str, content: bytes) -> None:
+    if not content:
+        raise HTTPException(
+            status_code=422,
+            detail="The uploaded document is empty.",
+        )
+
+    if extension == ".txt":
+        try:
+            content.decode("utf-8")
+        except UnicodeDecodeError:
+            raise HTTPException(
+                status_code=422,
+                detail="TXT documents must use UTF-8 text encoding.",
+            )
+
+    if extension == ".pdf":
+        try:
+            reader = PdfReader(BytesIO(content))
+
+            extracted_text = "\n".join(
+                page.extract_text() or ""
+                for page in reader.pages
+            ).strip()
+
+        except Exception:
+            raise HTTPException(
+                status_code=422,
+                detail="The PDF file is corrupted or cannot be read.",
+            )
+
+        if not extracted_text:
+            raise HTTPException(
+                status_code=422,
+                detail="The PDF has no searchable text content.",
+            )
+
+
 def save_uploaded_document(file: UploadFile) -> dict:
     if not file.filename:
         raise HTTPException(
@@ -46,12 +85,13 @@ def save_uploaded_document(file: UploadFile) -> dict:
             detail="Only .txt and .pdf files are allowed.",
         )
 
+    file_content = file.file.read()
+    validate_document_content(extension, file_content)
+
     UPLOADED_DOCS_PATH.mkdir(parents=True, exist_ok=True)
 
     destination = UPLOADED_DOCS_PATH / safe_file_name
-
-    with destination.open("wb") as saved_file:
-        saved_file.write(file.file.read())
+    destination.write_bytes(file_content)
 
     return {
         "message": "Document uploaded successfully.",
@@ -61,15 +101,26 @@ def save_uploaded_document(file: UploadFile) -> dict:
 
 def read_uploaded_file(file_path: Path) -> str:
     if file_path.suffix.lower() == ".txt":
-        return file_path.read_text(encoding="utf-8").strip()
+        try:
+            return file_path.read_text(encoding="utf-8").strip()
+        except UnicodeDecodeError:
+            raise ValueError(
+                f"{file_path.name} is not a valid UTF-8 TXT document."
+            )
 
     if file_path.suffix.lower() == ".pdf":
-        reader = PdfReader(str(file_path))
+        try:
+            reader = PdfReader(str(file_path))
 
-        return "\n".join(
-            page.extract_text() or ""
-            for page in reader.pages
-        ).strip()
+            return "\n".join(
+                page.extract_text() or ""
+                for page in reader.pages
+            ).strip()
+
+        except Exception:
+            raise ValueError(
+                f"{file_path.name} is corrupted or cannot be read."
+            )
 
     return ""
 
@@ -101,9 +152,17 @@ def get_uploaded_text_content(file_name: str) -> dict:
             detail="Only TXT documents can be edited in Guidely.",
         )
 
+    try:
+        content = file_path.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        raise HTTPException(
+            status_code=422,
+            detail="TXT document is not valid UTF-8 text.",
+        )
+
     return {
         "file_name": file_path.name,
-        "content": file_path.read_text(encoding="utf-8"),
+        "content": content,
     }
 
 

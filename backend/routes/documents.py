@@ -1,7 +1,10 @@
-from fastapi import APIRouter, File, UploadFile
-from pydantic import BaseModel
+import logging
 
+from fastapi import APIRouter, File, HTTPException, UploadFile
+
+from backend.models.schemas import TextDocumentUpdate
 from backend.services.document_service import load_sample_documents
+from backend.services.metrics_service import record_failure
 from backend.services.upload_service import (
     delete_uploaded_document,
     get_uploaded_text_content,
@@ -11,14 +14,34 @@ from backend.services.upload_service import (
 )
 from backend.services.vector_service import index_documents
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(
     prefix="/documents",
     tags=["Documents"],
 )
 
 
-class TextDocumentUpdate(BaseModel):
-    content: str
+def reindex_documents_safely() -> dict:
+    try:
+        return index_documents(force_reindex=True)
+
+    except ValueError as error:
+        record_failure("document_index_error")
+
+        raise HTTPException(
+            status_code=422,
+            detail=str(error),
+        )
+
+    except Exception:
+        logger.exception("Document indexing failed")
+        record_failure("document_index_error")
+
+        raise HTTPException(
+            status_code=500,
+            detail="Documents could not be indexed.",
+        )
 
 
 @router.get("/sample")
@@ -43,7 +66,12 @@ def get_uploaded_documents():
 
 @router.get("/uploaded/{file_name}/content")
 def get_uploaded_document_content(file_name: str):
-    return get_uploaded_text_content(file_name)
+    try:
+        return get_uploaded_text_content(file_name)
+
+    except HTTPException as error:
+        record_failure("document_read_error")
+        raise error
 
 
 @router.put("/uploaded/{file_name}/content")
@@ -51,8 +79,17 @@ def update_uploaded_document_content(
     file_name: str,
     request: TextDocumentUpdate,
 ):
-    update_result = update_uploaded_text_content(file_name, request.content)
-    index_result = index_documents(force_reindex=True)
+    try:
+        update_result = update_uploaded_text_content(
+            file_name,
+            request.content,
+        )
+
+    except HTTPException as error:
+        record_failure("document_update_error")
+        raise error
+
+    index_result = reindex_documents_safely()
 
     return {
         **update_result,
@@ -62,8 +99,14 @@ def update_uploaded_document_content(
 
 @router.post("/upload")
 def upload_document(file: UploadFile = File(...)):
-    upload_result = save_uploaded_document(file)
-    index_result = index_documents(force_reindex=True)
+    try:
+        upload_result = save_uploaded_document(file)
+
+    except HTTPException as error:
+        record_failure("invalid_or_corrupted_document")
+        raise error
+
+    index_result = reindex_documents_safely()
 
     return {
         **upload_result,
@@ -73,8 +116,14 @@ def upload_document(file: UploadFile = File(...)):
 
 @router.delete("/uploaded/{file_name}")
 def delete_document(file_name: str):
-    delete_result = delete_uploaded_document(file_name)
-    index_result = index_documents(force_reindex=True)
+    try:
+        delete_result = delete_uploaded_document(file_name)
+
+    except HTTPException as error:
+        record_failure("document_delete_error")
+        raise error
+
+    index_result = reindex_documents_safely()
 
     return {
         **delete_result,
@@ -84,9 +133,19 @@ def delete_document(file_name: str):
 
 @router.post("/reindex")
 def reindex_documents():
-    return index_documents(force_reindex=True)
+    return reindex_documents_safely()
 
 
 @router.get("/index-status")
 def get_index_status():
-    return index_documents(force_reindex=False) 
+    try:
+        return index_documents(force_reindex=False)
+
+    except Exception:
+        logger.exception("Index status check failed")
+        record_failure("index_status_error")
+
+        raise HTTPException(
+            status_code=500,
+            detail="Index status is currently unavailable.",
+        )

@@ -1,4 +1,3 @@
-````md
 # Guidely
 
 Guidely is an internal knowledge assistant that lets users upload company documents, ask questions in plain language, and receive AI-generated answers with source citations.
@@ -50,12 +49,17 @@ Guidely is an internal knowledge assistant that lets users upload company docume
 ```text
 guidely/
 ├── backend/
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── schemas.py
 │   ├── routes/
 │   │   ├── documents.py
+│   │   ├── metrics.py
 │   │   └── search.py
 │   ├── services/
 │   │   ├── answer_service.py
 │   │   ├── document_service.py
+│   │   ├── metrics_service.py
 │   │   ├── upload_service.py
 │   │   └── vector_service.py
 │   └── main.py
@@ -67,7 +71,7 @@ guidely/
 ├── .env
 ├── requirements.txt
 └── README.md
-````
+```
 
 ## Setup
 
@@ -140,6 +144,7 @@ http://localhost:5173
 | DELETE | `/documents/uploaded/{file_name}`         | Delete and reindex an uploaded document         |
 | POST   | `/documents/reindex`                      | Rebuild the document search index               |
 | GET    | `/documents/index-status`                 | Check the index status                          |
+| GET    | `/metrics/`                               | View latency, cache, and failure metrics        |
 
 ## Using Guidely
 
@@ -150,6 +155,31 @@ http://localhost:5173
 5. Read the AI answer.
 6. Check **Sources Used** to see the document chunks used for the answer.
 7. Use the Knowledge Library to edit TXT files, delete files, or reindex all documents.
+
+
+## Testing and Metrics
+
+Guidely was tested using five questions based on the five sample company documents. Each question was asked through the React frontend, which tested the complete flow from the user interface to FastAPI, FAISS retrieval, Gemini answer generation, and source display.
+
+| Metric | Target | Test Result | Status |
+|---|---:|---:|---|
+| Retrieval@3 | At least 80% | 100% (5 out of 5 expected documents appeared in the top 3 sources) | Pass |
+| Answer reference coverage | At least 90% | 100% (5 out of 5 answers included source citations) | Pass |
+| Embedding cache effectiveness | 100% for unchanged documents | 100% (5 cache hits and 0 cache misses) | Pass |
+| Median answer latency | Less than 3 seconds | 6.85 seconds | Not met |
+| P95 answer latency | Less than 5 seconds | 24.02 seconds | Not met |
+| Empty question handling | Clear 4xx response | HTTP 400 with “Question cannot be empty.” | Pass |
+| No-result handling | Clear 4xx response | HTTP 404 with “No relevant document chunks were found.” | Pass |
+| Invalid or corrupted document handling | Clear 4xx response | HTTP 422 with “The PDF file is corrupted or cannot be read.” | Pass |
+| Gemini API failure handling | Clear 5xx response | HTTP 502 with a clear Gemini error message | Implemented |
+
+The metrics are saved automatically in `storage/metrics.json` and can be viewed through the `GET /metrics/` endpoint.
+
+The system records successful query latency, median latency, P95 latency, embedding cache hits and misses, and failure types. The retrieval and cache tests were repeated with unchanged documents. This produced five cache hits and no cache misses.
+
+The current latency is affected mainly by the external Gemini API response time. The application still records and exposes actual response times instead of reporting artificial results.
+
+
 
 ## Security
 
@@ -163,7 +193,4 @@ Do not upload `.env` to GitHub. Add this to `.gitignore`:
 __pycache__/
 storage/
 data/uploaded-docs/
-```
-
-```
 ```
