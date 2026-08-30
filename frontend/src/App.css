@@ -34,6 +34,10 @@ body {
   padding: 0 56px 72px 0;
 }
 
+.app > * {
+  min-width: 0;
+}
+
 .app::before {
   position: absolute;
   top: 0;
@@ -104,6 +108,7 @@ label {
 }
 
 input {
+  width: 100%;
   flex: 1;
   min-width: 0;
   padding: 15px 16px;
@@ -181,6 +186,8 @@ button:disabled {
 }
 
 .upload-form input {
+  min-width: 0;
+  max-width: 100%;
   width: 100%;
   padding: 9px;
   border-color: #3a4d6d;
@@ -284,6 +291,10 @@ button:disabled {
   color: #f5f8fd;
   font-size: 0.81rem;
   overflow-wrap: anywhere;
+}
+
+.document-row > div:first-child {
+  min-width: 0;
 }
 
 .document-row p,
@@ -456,6 +467,42 @@ button:disabled {
   overflow-wrap: anywhere;
 }
 
+@media (max-width: 1100px) {
+  .app {
+    grid-template-columns: 290px minmax(0, 1fr);
+    column-gap: 32px;
+    padding-right: 32px;
+  }
+
+  .app::before {
+    width: 290px;
+  }
+
+  .editor-card {
+    right: 32px;
+    left: 322px;
+  }
+
+  .documents-title,
+  .document-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .documents-actions,
+  .document-buttons {
+    width: 100%;
+  }
+
+  .documents-actions {
+    justify-content: space-between;
+  }
+
+  .document-buttons button {
+    flex: 1;
+  }
+}
+
 @media (max-width: 850px) {
   .app {
     grid-template-columns: 280px minmax(0, 1fr);
@@ -470,6 +517,20 @@ button:disabled {
   .editor-card {
     left: 310px;
     right: 30px;
+  }
+
+  .card,
+  .answer-card {
+    padding: 24px;
+  }
+
+  .question-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .question-row button {
+    width: 100%;
   }
 }
 
@@ -493,6 +554,10 @@ button:disabled {
     padding: 8px 0;
   }
 
+  .hero h1 {
+    font-size: clamp(3rem, 15vw, 4.5rem);
+  }
+
   .upload-card,
   .documents-section {
     padding: 22px;
@@ -514,10 +579,37 @@ button:disabled {
     right: 18px;
     bottom: 18px;
     left: 18px;
+    padding: 22px;
   }
 }
 
 @media (max-width: 500px) {
+  .app {
+    row-gap: 20px;
+    padding: 22px 12px 40px;
+  }
+
+  .hero {
+    padding-inline: 6px;
+  }
+
+  .subtitle {
+    margin-top: 14px;
+    font-size: 0.95rem;
+  }
+
+  .card,
+  .answer-card,
+  .upload-card,
+  .documents-section {
+    padding: 20px 16px;
+    border-radius: 15px;
+  }
+
+  .documents-section {
+    padding-top: 18px;
+  }
+
   .question-row,
   .editor-header,
   .editor-footer {
@@ -541,5 +633,47 @@ button:disabled {
 
   .source-header {
     flex-direction: column;
+  }
+
+  .document-row {
+    padding: 12px;
+  }
+
+  .editor-card {
+    top: 10px;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    padding: 18px 14px;
+    border-radius: 15px;
+  }
+
+  .editor-footer .upload-message {
+    margin-top: 0;
+  }
+
+  .source-card {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .documents-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .document-count {
+    align-self: flex-start;
+  }
+
+  .reindex-button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button {
+    transition: none;
   }
 }
